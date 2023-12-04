@@ -17,14 +17,36 @@ let localStream = null;
 let remoteStream = null;
 let roomDialog = null;
 let roomId = null;
+var textChannel = null;
 
 function init() {
   document.querySelector('#cameraBtn').addEventListener('click', openUserMedia);
   document.querySelector('#hangupBtn').addEventListener('click', hangUp);
   document.querySelector('#createBtn').addEventListener('click', createRoom);
   document.querySelector('#joinBtn').addEventListener('click', joinRoom);
+  document.querySelector('#sendText').addEventListener('click', sendText);
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
 }
+
+function sendText() {
+  let userName = document.querySelector('#userName').value
+  let message = userName + ": " + document.querySelector('#textMsg').value;
+  textChannel.send(message);
+  process_message(message);
+}
+
+function process_message(message) {
+  let chatContainer = document.querySelector('#textChat');
+  console.log(chatContainer);
+  var textBubble = document.createElement("div");
+  textBubble.className = "container";
+  var textLabel = document.createElement("label");
+  textLabel.innerHTML = message;
+  textBubble.appendChild(textLabel);
+  chatContainer.insertBefore(textBubble, chatContainer.childNodes[chatContainer.childNodes.length - 3]);
+}
+
+
 
 async function createRoom() {
   document.querySelector('#createBtn').disabled = true;
@@ -36,6 +58,11 @@ async function createRoom() {
   peerConnection = new RTCPeerConnection(configuration);
 
   registerPeerConnectionListeners();
+  
+  textChannel = peerConnection.createDataChannel("text", {reliable: true, ordered: true});
+  textChannel.onmessage = function(event) {
+    process_message(event.data);
+  };
 
   localStream.getTracks().forEach(track => {
     peerConnection.addTrack(track, localStream);
@@ -129,6 +156,14 @@ async function joinRoomById(roomId) {
     console.log('Create PeerConnection with configuration: ', configuration);
     peerConnection = new RTCPeerConnection(configuration);
     registerPeerConnectionListeners();
+
+    peerConnection.ondatachannel = (event) => {
+      textChannel = event.channel;
+      textChannel.onmessage = function(event) {
+        process_message(event.data);
+      }
+    };
+
     localStream.getTracks().forEach(track => {
       peerConnection.addTrack(track, localStream);
     });

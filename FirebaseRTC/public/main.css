@@ -99,3 +99,19 @@ div#videos > video {
 	width: 70%;
 	background: gray;
 }
+
+.container {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 1px;
+    margin: 10px 0;
+}
+
+.textChat {
+border: 2px solid #000000;
+background-color: #f1f1f1;
+border-radius: 5px;
+padding: 1px;
+margin: 10px 0;
+}
