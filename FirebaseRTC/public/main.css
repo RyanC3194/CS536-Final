@@ -22,7 +22,7 @@ body {
 }
 
 #message h1 {
-    font-size: 22px;
+    font-size: 80px;
     font-weight: 300;
     color: rgba(0, 0, 0, 0.6);
     margin: 0 0 16px;
@@ -81,10 +81,21 @@ div#videos {
     flex-wrap: wrap;
 }
 
-div#videos > video {
-    background: black;
-    width: 640px;
-    height: 100%;
-    display: block;
+div#videos > video {  
+    display: flex;
     margin: 1em;
+}
+
+#localVideo{
+	
+	width: 20%;
+	background: #ECEFF1;
+}
+
+#remoteVideo{
+	
+	max-width: initial;
+	height: 70%;
+	width: 70%;
+	background: gray;
 }
