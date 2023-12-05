@@ -150,7 +150,14 @@ div#videos>video {
     border-radius: 5px;
     padding: 5px;
     margin: 10px 0;
+    position: relative;
 }
+
+.textSubmitButton {
+    position:absolute;
+    right:10px;
+}
+
 
 /* select media devices section */
 section {
