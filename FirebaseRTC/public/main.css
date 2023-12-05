@@ -1,3 +1,8 @@
+.mdc-fab {
+    background-color: #ff4081;
+    background-color: var(--mdc-theme-secondary, #ff4081);
+}
+
 body {
     background: #ECEFF1;
     color: rgba(0, 0, 0, 0.87);
@@ -57,7 +62,8 @@ body {
     font-size: 13px;
 }
 
-@media (max-width: 600px) {
+/* original media query */
+/* @media (max-width: 600px) {
 
     body,
     #message {
@@ -69,7 +75,7 @@ body {
     body {
         border-top: 16px solid #ffa100;
     }
-}
+} */
 
 body {
     margin: 1em;
@@ -87,12 +93,12 @@ div#videos {
 
 div#videos>video {
     display: flex;
-    margin: 1em;
+    margin: 0.5em;
 }
 
 #localVideo {
 
-    width: 20%;
+    width: 25%;
     background: #ECEFF1;
 }
 
@@ -113,14 +119,54 @@ div#videos>video {
 }
 
 .textChat {
-    border: 2px solid #000000;
+    width: 70%;
+    border: 1px solid #000000;
     background-color: #f1f1f1;
     border-radius: 5px;
-    padding: 1px;
+    padding: 5px;
     margin: 10px 0;
 }
 
-label {
+/* select media devices section */
+section {
+    width: 70%;
+}
+
+/* select media devices menus */
+select {
+    width: 50%;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+/* select media devices label */
+.device-label {
     width: 12em;
     display: inline-block;
+}
+
+@media (max-width: 680px) {
+    div#videos>video {
+        flex-direction: column;
+    }
+
+    #localVideo {
+        width: 50%;
+    }
+
+    #remoteVideo {
+        width: 100%;
+    }
+
+    section {
+        width: auto;
+    }
+
+    select {
+        width: 100%;
+    }
+
+    .textChat {
+        width: auto
+    }
 }

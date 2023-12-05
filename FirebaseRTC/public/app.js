@@ -34,11 +34,13 @@ function init() {
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
 }
 
+
 function sendText() {
   let userName = document.querySelector('#userName').value
   let message = userName + ": " + document.querySelector('#textMsg').value;
   textChannel.send(message);
   process_message(message);
+  document.querySelector('#textMsg').value = "";
 }
 
 function process_message(message) {
@@ -51,27 +53,6 @@ function process_message(message) {
   textBubble.appendChild(textLabel);
   chatContainer.insertBefore(textBubble, chatContainer.childNodes[chatContainer.childNodes.length - 3]);
 }
-
-
-
-function sendText() {
-  let userName = document.querySelector('#userName').value
-  let message = userName + ": " + document.querySelector('#textMsg').value;
-  textChannel.send(message);
-  process_message(message);
-}
-
-function process_message(message) {
-  let chatContainer = document.querySelector('#textChat');
-  console.log(chatContainer);
-  var textBubble = document.createElement("div");
-  textBubble.className = "container";
-  var textLabel = document.createElement("label");
-  textLabel.innerHTML = message;
-  textBubble.appendChild(textLabel);
-  chatContainer.insertBefore(textBubble, chatContainer.childNodes[chatContainer.childNodes.length - 3]);
-}
-
 
 
 async function createRoom() {
