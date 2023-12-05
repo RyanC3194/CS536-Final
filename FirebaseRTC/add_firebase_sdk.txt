@@ -1,0 +1,33 @@
+< can ignore this file. saving here just in case we need in future. >
+
+If you're already using npm and a module bundler such as webpack or Rollup, you can run the following command to install the latest SDK (Learn more):
+
+npm install firebase
+
+Then, initialize Firebase and begin using the SDKs for the products you'd like to use.
+
+```
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCJbQI1dzWj8wgL1qTdCggq7ZDqYc0mmts",
+  authDomain: "fir-rtc-792d0.firebaseapp.com",
+  projectId: "fir-rtc-792d0",
+  storageBucket: "fir-rtc-792d0.appspot.com",
+  messagingSenderId: "86330011416",
+  appId: "1:86330011416:web:464107f0a57d0d0450b86d",
+  measurementId: "G-8KCEQT5SLH"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+```
