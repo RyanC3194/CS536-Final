@@ -5,9 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CS 536 WebRTC</title>
-    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/5.9.3/firebase-app.js"></script>
@@ -35,22 +35,23 @@
             onclick="userName.value=''; logoutDiv.style.display = 'None'; loginDiv.style.display = 'Block'"></button>
         <p></p>
     </div>
-    <div id="buttons">
-        <button class="mdc-button mdc-button--raised" id="cameraBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">perm_camera_mic</i>
-            <span class="mdc-button__label">Open camera & microphone</span>
+    <div id="mainButtons">
+        <button id="cameraBtn">
+            <i aria-hidden="true" class="fa-solid fa-camera"></i>
+            <i aria-hidden="true" class="fa-solid fa-microphone"></i>
+            <span>Open camera & microphone</span>
         </button>
-        <button class="mdc-button mdc-button--raised" disabled id="createBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">group_add</i>
-            <span class="mdc-button__label">Create room</span>
+        <button disabled id="createBtn">
+            <i aria-hidden="true" class="fa-solid fa-user-plus"></i>
+            <span>Create room</span>
         </button>
-        <button class="mdc-button mdc-button--raised" disabled id="joinBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">group</i>
-            <span class="mdc-button__label">Join room</span>
+        <button disabled id="joinBtn">
+            <i aria-hidden="true" class="fa-solid fa-user-group"></i>
+            <span>Join room</span>
         </button>
-        <button class="mdc-button mdc-button--raised" disabled id="hangupBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">close</i>
-            <span class="mdc-button__label">Hangup</span>
+        <button disabled id="hangupBtn">
+            <i aria-hidden="true" class="fa-solid fa-xmark"></i>
+            <span>Hang-up</span>
         </button>
     </div>
     <div>
@@ -66,48 +67,39 @@
                 <option value="none">None detected</option>
             </select>
         </div>
-
         <div class="select">
             <label class="device-label" for="audioOutput">Audio output destination: </label><select id="audioOutput">
                 <option value="none">None detected</option>
             </select>
         </div>
-
         <div class="select">
             <label class="device-label" for="videoSource">Video source: </label><select id="videoSource">
                 <option value="none">None detected</option>
             </select>
         </div>
     </section>
-    <div class="mdc-dialog" id="room-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title"
-        aria-describedby="my-dialog-content">
-        <div class="mdc-dialog__container">
-            <div class="mdc-dialog__surface">
-                <h2 class="mdc-dialog__title" id="my-dialog-title">Join room</h2>
-                <div class="mdc-dialog__content" id="my-dialog-content">
-                    Enter ID for room to join:
-                    <div class="mdc-text-field">
-                        <input type="text" id="room-id" class="mdc-text-field__input">
-                        <label class="mdc-floating-label" for="my-text-field">Room ID</label>
-                        <div class="mdc-line-ripple"></div>
-                    </div>
-                </div>
-                <footer class="mdc-dialog__actions">
-                    <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="no">
-                        <span class="mdc-button__label">Cancel</span>
-                    </button>
-                    <button id="confirmJoinBtn" type="button" class="mdc-button mdc-dialog__button"
-                        data-mdc-dialog-action="yes">
-                        <span class="mdc-button__label">Join</span>
-                    </button>
-                </footer>
+
+    <dialog data-modal>
+        <form>
+            <h3>Join room</h3>
+            <div id="roomForm">
+                <label>Enter room ID: </label>
+                <input type="text" id="room-id" placeholder="Enter room ID" />
             </div>
-        </div>
-        <div class="mdc-dialog__scrim"></div>
-    </div>
+            <div id="modalButtons">
+                <button id="cancelJoinBtn" type="button">
+                    <span>Cancel</span>
+                </button>
+                <button id="confirmJoinBtn" type="button">
+                    <span>Join</span>
+                </button>
+            </div>
+        </form>
+    </dialog>
 
     <div id="textChat" class="textChat">
         <div>
+            <i class="fa-solid fa-paper-plane"></i>
             <input type="text" id="textMsg" name="textMsg">
             <input type="button" id="sendText" value="Send">
         </div>

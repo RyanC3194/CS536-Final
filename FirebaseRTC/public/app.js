@@ -1,5 +1,3 @@
-mdc.ripple.MDCRipple.attachTo(document.querySelector('.mdc-button'));
-
 let configuration = {
   iceServers: [
     {
@@ -31,9 +29,7 @@ function init() {
   document.querySelector('#createBtn').addEventListener('click', createRoom);
   document.querySelector('#joinBtn').addEventListener('click', joinRoom);
   document.querySelector('#sendText').addEventListener('click', sendText);
-  roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
 }
-
 
 function sendText() {
   let userName = document.querySelector('#userName').value
@@ -148,6 +144,8 @@ async function createRoom() {
 }
 
 function joinRoom() {
+  const modal = document.querySelector("[data-modal]");
+
   document.querySelector('#createBtn').disabled = true;
   document.querySelector('#joinBtn').disabled = true;
 
@@ -157,9 +155,17 @@ function joinRoom() {
       console.log('Join room: ', roomId);
       document.querySelector(
         '#currentRoom').innerText = `Current room is ${roomId} - You are the callee!`;
+      modal.close()
       await joinRoomById(roomId);
     }, { once: true });
-  roomDialog.open();
+
+  /* Join room modal/dialog */
+  document.querySelector("#cancelJoinBtn").addEventListener("click", async () => {
+    document.querySelector('#createBtn').disabled = false;
+    document.querySelector('#joinBtn').disabled = false;
+    modal.close()
+  });
+  modal.showModal();
 }
 
 async function joinRoomById(roomId) {
@@ -412,7 +418,26 @@ function gotStream(stream) {
   return navigator.mediaDevices.enumerateDevices(); // Refresh list of available devices
 }
 
+function restartTracks() {
+  if (localStream) {
+    localStream.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
+  const audioSource = audioInputSelect.value;
+  const videoSource = videoSelect.value;
+  const constraints = {
+    audio: { deviceId: audioSource ? { exact: audioSource } : undefined },
+    video: { deviceId: videoSource ? { exact: videoSource } : undefined }
+  };
+  navigator.mediaDevices.getUserMedia(constraints).then(gotStream).then(gotDevices).catch(handleError);
+}
+
 function switchTracks() {
+  if (!peerConnection) {
+    restartTracks();
+    return;
+  }
   connections = [peerConnection];
   const audioSource = audioInputSelect.value;
   const videoSource = videoSelect.value;
