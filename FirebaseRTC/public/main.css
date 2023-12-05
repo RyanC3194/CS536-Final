@@ -22,7 +22,7 @@ body {
 }
 
 #message h1 {
-    font-size: 22px;
+    font-size: 80px;
     font-weight: 300;
     color: rgba(0, 0, 0, 0.6);
     margin: 0 0 16px;
@@ -85,11 +85,38 @@ div#videos {
 }
 
 div#videos>video {
-    background: black;
-    width: 640px;
-    height: 100%;
-    display: block;
+    display: flex;
     margin: 1em;
+}
+
+#localVideo {
+
+    width: 20%;
+    background: #ECEFF1;
+}
+
+#remoteVideo {
+
+    max-width: initial;
+    height: 70%;
+    width: 70%;
+    background: gray;
+}
+
+.container {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 1px;
+    margin: 10px 0;
+}
+
+.textChat {
+    border: 2px solid #000000;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 1px;
+    margin: 10px 0;
 }
 
 label {

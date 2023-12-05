@@ -21,6 +21,20 @@
 
 <body>
     <h1>Welcome to FirebaseRTC!</h1>
+    <div id="loginDiv">
+        <label>User: </label>
+        <input type="text" id="userName" name="userName">
+        <input type="button" value="Submit" id="Submit"
+            onClick="showUserName.innerHTML=userName.value; logoutDiv.style.display = 'block'; loginDiv.style.display = 'None'">
+        <p></p>
+    </div>
+    <div style="display: none;" id="logoutDiv">
+        <label>Welcome, </label>
+        <label id="showUserName">dum</label>
+        <input type="button" id="logout" value="Logout"
+            onclick="userName.value=''; logoutDiv.style.display = 'None'; loginDiv.style.display = 'Block'"></button>
+        <p></p>
+    </div>
     <div id="buttons">
         <button class="mdc-button mdc-button--raised" id="cameraBtn">
             <i class="material-icons mdc-button__icon" aria-hidden="true">perm_camera_mic</i>
@@ -43,8 +57,8 @@
         <span id="currentRoom"></span>
     </div>
     <div id="videos">
-        <video id="localVideo" muted autoplay playsinline></video>
         <video id="remoteVideo" autoplay playsinline></video>
+        <video id="localVideo" muted autoplay playsinline></video>
     </div>
     <div class="select">
         <label for="audioSource">Audio input source: </label><select id="audioSource">
@@ -89,6 +103,14 @@
         </div>
         <div class="mdc-dialog__scrim"></div>
     </div>
+
+    <div id="textChat" class="textChat">
+        <div>
+            <input type="text" id="textMsg" name="textMsg">
+            <input type="button" id="sendText" value="Send">
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 
