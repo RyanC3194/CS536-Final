@@ -1,11 +1,11 @@
 
 
-const peerConnection = null;
-const remoteStream = null;
-const localStream = null;
-const roomId = null;
-const textChannel = null;
-const initializedHangup = false;
+let peerConnection = null;
+let remoteStream = null;
+let localStream = null;
+let roomId = null;
+let textChannel = null;
+let initializedHangup = false;
 
 // Replace this once the OpenRelay TURN server's 50GB quota usage has been reached.
 const TURN_API_KEY = "https://nhyao.metered.live/api/v1/turn/credentials?apiKey=28c84515a1faf51ce04566f25404dfa4c3d5";
