@@ -4,6 +4,11 @@ let peerConnection = null;
 let roomId = null;
 let textChannel = null;
 let initializedHangup = false;
+let expectedSize = -1;
+let imgChannel = null;
+let expectedSizeChannel = null;
+let receiveBuffer = [];
+let receivedSize = 0;
 
 // Replace this once the OpenRelay TURN server's 50GB quota usage has been reached.
 const TURN_API_KEY = "https://nhyao.metered.live/api/v1/turn/credentials?apiKey=28c84515a1faf51ce04566f25404dfa4c3d5";
@@ -28,6 +33,72 @@ function processMessage(message) {
   textLabel.innerHTML = message;
   textBubble.appendChild(textLabel);
   document.getElementById("textMessages").appendChild(textBubble);
+}
+
+function processImgChannel(event) {
+  receiveBuffer.push(event.data);
+  receivedSize += event.data.byteLength;
+
+  console.log(receivedSize);
+  if (receivedSize == expectedSize) {
+    let reader = new FileReader();
+    reader.onload = function(e) {
+      processImg(e.target.result);
+    }
+
+    const received = new Blob(receiveBuffer);
+
+    processImg(URL.createObjectURL(received));
+  }
+
+
+}
+
+function sendImage() {
+  if (document.getElementById("imageText").files && document.getElementById("imageText").files[0]) {
+    let file = document.getElementById("imageText").files[0];
+  
+    expectedSizeChannel.send(file.size)
+    // send the date over
+    let reader = new FileReader();
+    let offset = 0;
+    const chunkSize = 16384;
+    reader.onload = function(e) {
+      imgChannel.send(e.target.result);
+      offset += e.target.result.byteLength;
+      if (offset < file.size) {
+        readSlice(offset);
+      }
+    }
+
+    const readSlice = o => {
+      console.log('readSlice ', o);
+      const slice = file.slice(offset, o + chunkSize);
+      reader.readAsArrayBuffer(slice);
+    };
+    document.getElementById('imageText').value = "";
+    readSlice(0);
+
+    // show on local
+    let reader1 = new FileReader();
+    reader1.onload = function(e) {
+      processImg(e.target.result);
+    }
+    reader1.readAsDataURL(file);
+  }
+}
+
+function processImg(file) {
+  var textBubble = document.createElement("div");
+  textBubble.className = "container";
+  var imgEle = document.createElement("img");
+
+  imgEle.src = file;
+  imgEle.className = "textChat";
+
+  textBubble.appendChild(imgEle);
+  document.getElementById("textMessages").appendChild(textBubble);
+
 }
 
 // initialize a new peer connection
@@ -87,6 +158,16 @@ async function createRoom() {
   textChannel = peerConnection.createDataChannel("text", { reliable: true, ordered: true});
   textChannel.onmessage = function (event) {
     processMessage(event.data);
+  };
+
+  expectedSizeChannel = peerConnection.createDataChannel("expectedSize", {reliable: true, ordered: true});
+  expectedSizeChannel.onmessage = function (event) {
+    expectedSize = event.data;
+  }
+
+  imgChannel = peerConnection.createDataChannel("img", { reliable: true, ordered: true});
+  imgChannel.onmessage = function (event) {
+    processImgChannel(event);
   };
 
   // set local SDP
@@ -158,9 +239,23 @@ async function joinRoomById(roomId) {
     await initPeerConnection(roomsDB,"callee");
 
     peerConnection.ondatachannel = (event) => {
-      textChannel = event.channel;
-      textChannel.onmessage = function (event) {
-        processMessage(event.data);
+      if (event.channel.label == "text") {
+        textChannel = event.channel;
+        textChannel.onmessage = function (event) {
+          processMessage(event.data);
+        }
+      }
+      else if (event.channel.label == "img") {
+        imgChannel = event.channel;
+        imgChannel.onmessage = function (event) {
+          processImgChannel(event);
+        }
+      }
+      else if (event.channel.label == "expectedSize") {
+        expectedSizeChannel = event.channel
+        expectedSizeChannel.onmessage = function (event) {
+          expectedSize = event.data;
+        }
       }
     };
 
