@@ -1,8 +1,6 @@
 
 
 let peerConnection = null;
-let remoteStream = null;
-let localStream = null;
 let roomId = null;
 let textChannel = null;
 let initializedHangup = false;
@@ -52,14 +50,14 @@ async function initPeerConnection(roomsDB, collectionName) {
   });
 
   // add the media tracks to peer connection
-  localStream.getTracks().forEach(track => {
-    peerConnection.addTrack(track, localStream);
+  localVideoElement.srcObject.getTracks().forEach(track => {
+    peerConnection.addTrack(track, localVideoElement.srcObject);
   });
 
   // listen for remote media track
   peerConnection.addEventListener('track', event => {
     event.streams[0].getTracks().forEach(track => {
-      remoteStream.addTrack(track);
+      document.getElementById('remoteVideo').srcObject.addTrack(track);
     });
   });
 }
@@ -203,10 +201,8 @@ async function openMedia() {
   // Browser needs permission before displaying media devices, so auto refresh.
   navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
 
-  document.getElementById('localVideo').srcObject = stream;
-  localStream = stream;
-  remoteStream = new MediaStream();
-  document.getElementById('remoteVideo').srcObject = remoteStream;
+  localVideoElement.srcObject = stream;
+  document.getElementById('remoteVideo').srcObject = new MediaStream();
 
   document.getElementById('openMediaButton').disabled = true;
   document.getElementById('createRoomButton').disabled = false;
@@ -216,7 +212,7 @@ async function openMedia() {
 
 
 function hangUPUI() {
-  document.getElementById('localVideo').srcObject = null;
+  localVideoElement.srcObject = null;
   document.getElementById('remoteVideo').srcObject = null;
   document.getElementById('openMediaButton').disabled = false;
   document.getElementById('createRoomButton').disabled = true;
@@ -244,13 +240,13 @@ async function deleteRoom() {
 
 async function hangUp() {
   initializedHangup = true;
-  const tracks = document.getElementById('localVideo').srcObject.getTracks();
+  const tracks = localVideoElement.srcObject.getTracks();
   tracks.forEach(track => {
     track.stop();
   });
 
-  if (remoteStream) {
-    remoteStream.getTracks().forEach(track => track.stop());
+  if (document.getElementById('remoteVideo').srcObject) {
+    document.getElementById('remoteVideo').srcObject.getTracks().forEach(track => track.stop());
   }
 
   if (peerConnection) {
@@ -346,14 +342,13 @@ function changeAudioDestination() {
 }
 
 function gotStream(stream) {
-  localStream = stream; // make stream available to console
   localVideoElement.srcObject = stream;
   return navigator.mediaDevices.enumerateDevices(); // Refresh list of available devices
 }
 
 function restartTracks() {
-  if (localStream) {
-    localStream.getTracks().forEach(track => {
+  if (localVideoElement.srcObject) {
+    localVideoElement.srcObject.getTracks().forEach(track => {
       track.stop();
     });
   }
@@ -395,7 +390,6 @@ function switchTracks() {
         console.log("Found audio sender:", audioSender);
         audioSender.replaceTrack(audioTrack);
 
-        localStream = stream; // make stream available to console
         localVideoElement.srcObject = stream;
       });
     })
