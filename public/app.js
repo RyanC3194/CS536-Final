@@ -129,6 +129,50 @@ async function initPeerConnection(roomsDB, collectionName) {
       document.getElementById('remoteVideo').srcObject.addTrack(track);
     });
   });
+
+  // set up data channels (text and images)
+  if (collectionName == "caller") {
+      // create the text channel
+    textChannel = peerConnection.createDataChannel("text", { reliable: true, ordered: true});
+    textChannel.onmessage = function (event) {
+      processMessage(event.data);
+    };
+
+    // image Channel
+    imgChannel = peerConnection.createDataChannel("img", { reliable: true, ordered: true});
+    imgChannel.onmessage = function (event) {
+      processImgChannel(event);
+    };
+
+    // use to send the expected size for the image coming from the img channel
+    expectedSizeChannel = peerConnection.createDataChannel("expectedSize", {reliable: true, ordered: true});
+    expectedSizeChannel.onmessage = function (event) {
+      expectedSize = event.data;
+    }
+  }
+  // callee
+  else {
+    peerConnection.ondatachannel = (event) => {
+      if (event.channel.label == "text") {
+        textChannel = event.channel;
+        textChannel.onmessage = function (event) {
+          processMessage(event.data);
+        }
+      }
+      else if (event.channel.label == "img") {
+        imgChannel = event.channel;
+        imgChannel.onmessage = function (event) {
+          processImgChannel(event);
+        }
+      }
+      else if (event.channel.label == "expectedSize") {
+        expectedSizeChannel = event.channel
+        expectedSizeChannel.onmessage = function (event) {
+          expectedSize = event.data;
+        }
+      }
+    };
+  }
 }
 
 // update html when a room is created
@@ -152,21 +196,6 @@ async function createRoom() {
   // initialize the RTCPeerConnection
   await initPeerConnection(roomsDB, "caller");
 
-  // create the text channel
-  textChannel = peerConnection.createDataChannel("text", { reliable: true, ordered: true});
-  textChannel.onmessage = function (event) {
-    processMessage(event.data);
-  };
-
-  expectedSizeChannel = peerConnection.createDataChannel("expectedSize", {reliable: true, ordered: true});
-  expectedSizeChannel.onmessage = function (event) {
-    expectedSize = event.data;
-  }
-
-  imgChannel = peerConnection.createDataChannel("img", { reliable: true, ordered: true});
-  imgChannel.onmessage = function (event) {
-    processImgChannel(event);
-  };
 
   // set local SDP
   const offer = await peerConnection.createOffer();
@@ -235,27 +264,6 @@ async function joinRoomById(roomId) {
   if (roomSnapshot.exists) {
 
     await initPeerConnection(roomsDB,"callee");
-
-    peerConnection.ondatachannel = (event) => {
-      if (event.channel.label == "text") {
-        textChannel = event.channel;
-        textChannel.onmessage = function (event) {
-          processMessage(event.data);
-        }
-      }
-      else if (event.channel.label == "img") {
-        imgChannel = event.channel;
-        imgChannel.onmessage = function (event) {
-          processImgChannel(event);
-        }
-      }
-      else if (event.channel.label == "expectedSize") {
-        expectedSizeChannel = event.channel
-        expectedSizeChannel.onmessage = function (event) {
-          expectedSize = event.data;
-        }
-      }
-    };
 
     // Set local and remote SDP 
     const offer = roomSnapshot.data().offer;
