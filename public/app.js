@@ -39,7 +39,6 @@ function processImgChannel(event) {
   receiveBuffer.push(event.data);
   receivedSize += event.data.byteLength;
 
-  console.log(receivedSize);
   if (receivedSize == expectedSize) {
     let reader = new FileReader();
     reader.onload = function(e) {
@@ -72,7 +71,6 @@ function sendImage() {
     }
 
     const readSlice = o => {
-      console.log('readSlice ', o);
       const slice = file.slice(offset, o + chunkSize);
       reader.readAsArrayBuffer(slice);
     };
