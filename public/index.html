@@ -20,7 +20,7 @@
 </head>
 
 <body>
-    <!-- <h1>Welcome to WebRTC!</h1> -->
+    <h1>Welcome to WebRTC!</h1>
     <div id="loginDiv">
         <label>User: </label>
         <input type="text" id="userName" name="userName" placeholder="Enter your name">
@@ -35,31 +35,29 @@
             onclick="userName.value=''; logoutDiv.style.display = 'None'; loginDiv.style.display = 'Block'"></button>
         <p></p>
     </div>
-    <div id="mainButtons">
-        <button id="cameraBtn">
-            <i aria-hidden="true" class="fa-solid fa-camera"></i>
-            <i aria-hidden="true" class="fa-solid fa-microphone"></i>
-            <span>Open camera & microphone</span>
-        </button>
-        <button disabled id="createBtn">
-            <i aria-hidden="true" class="fa-solid fa-user-plus"></i>
-            <span>Create room</span>
-        </button>
-        <button disabled id="joinBtn">
-            <i aria-hidden="true" class="fa-solid fa-user-group"></i>
-            <span>Join room</span>
-        </button>
-        <button disabled id="hangupBtn">
-            <i aria-hidden="true" class="fa-solid fa-xmark"></i>
-            <span>Hang-up</span>
-        </button>
-    </div>
     <div id="videos">
         <video id="remoteVideo" autoplay playsinline></video>
         <video id="localVideo" muted autoplay playsinline></video>
     </div>
-    <div id="currentRoomDiv">
-        <span id="currentRoom"></span>
+    <div id="currentRoom"></div>
+    <div id="mainButtons">
+        <button id="openMediaButton" onclick="openMedia();">
+            <i aria-hidden="true" class="fa-solid fa-camera"></i>
+            <i aria-hidden="true" class="fa-solid fa-microphone"></i>
+            <span>Turn on camera & microphone</span>
+        </button>
+        <button disabled id="createRoomButton" onclick="createRoom();">
+            <i aria-hidden="true" class="fa-solid fa-user-plus"></i>
+            <span>Create room</span>
+        </button>
+        <button disabled id="joinRoomButton" onclick="joinRoom();">
+            <i aria-hidden="true" class="fa-solid fa-user-group"></i>
+            <span>Join room</span>
+        </button>
+        <button disabled id="hangUpButton" onclick="hangUp();">
+            <i aria-hidden="true" class="fa-solid fa-xmark"></i>
+            <span>Hang-up</span>
+        </button>
     </div>
     <section>
         <div class="select">
@@ -96,13 +94,49 @@
             </div>
         </form>
     </dialog>
-
+    <dialog roomNotfound id="roomNotFound">
+        <form>
+            <h3>
+                Room not found
+            </h3>
+            <label id="roomNotFoundText"></label>
+            <p></p>
+            <button type="button" onclick="(document.getElementById('roomNotFound')).close();"><span>Ok</span></button>
+        </form>
+    </dialog>
+    <dialog disconnected id="disconnected">
+        <form>
+            <h3>
+                Disconnected!
+            </h3>
+            <label">The other client disconnceted!</label>
+                <p></p>
+                <button type="button" id="disconnectOkBtn"
+                    onclick="(document.getElementById('disconnected')).close();"><span>Ok</span></button>
+        </form>
+    </dialog>
     <div id="textChat" class="textChat">
+        <div>
+            <div id="textMessages">
+                <!-- test chat message formatting -->
+                <!-- <div class="container">
+                    <label>Hi!!!</label>
+                </div>
+                <div class="container">
+                    <img src="https://wallpapers.com/images/featured/4k-oaax18kaapkokaro.jpg" class="textChatImage">
+                </div> -->
+            </div>
+        </div>
         <div>
             <i class="fa-solid fa-paper-plane"></i>
             <input type="text" id="textMsg" name="textMsg">
-            <input type="button" id="sendText" value="Send">
+            <input type="button" id="sendText" value="Send" class="textSubmitButton" onclick="sendText();">
         </div>
+        <div id="imageSelectDiv">
+            <input type="file" id="imageText" name="imageText" accept="image/png, image/jpeg" />
+            <input type="button" id="sendImage" value="Send Image" class="textSubmitButton" onclick="sendImage();">
+        </div>
+
     </div>
 
     <script src="app.js"></script>

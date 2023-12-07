@@ -73,18 +73,19 @@ body {
 } */
 
 body {
-    padding: 1em 1em;
+    margin: 1em 1em;
 }
 
 #loginDiv {
     width: 20em;
     display: flex;
     align-items: center;
+    margin: 10px;
 }
 
 #loginDiv>input[type=text] {
     flex-grow: 1;
-    margin: 1em 5px;
+    margin: 0 5px;
     padding: 5px 5px;
 }
 
@@ -94,6 +95,10 @@ body {
 
 #showUserName {
     padding-right: 20px;
+}
+
+#mainButtons {
+    margin-bottom: 0.5em;
 }
 
 #mainButtons>button {
@@ -140,8 +145,8 @@ div#videos>video {
     background: lightgrey;
 }
 
-#currentRoomDiv {
-    margin: 0.25em 0;
+#currentRoom {
+    margin-bottom: 0.30em;
 }
 
 .container {
@@ -159,6 +164,7 @@ div#videos>video {
     border-radius: 5px;
     padding: 5px;
     margin: 10px 0;
+    position: relative;
 }
 
 /* select media devices section */
@@ -192,13 +198,14 @@ select {
     color: white
 }
 
-#cancelJoinBtn {
+#cancelJoinBtn,
+#disconnectOkBtn {
     margin: 0.2em 0.2em;
     font-size: 1rem;
     padding: 8px 10px;
     border: none;
     border-radius: 4px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.24);
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 #modalButtons>button:active {
@@ -227,6 +234,18 @@ select {
     align-items: center;
 }
 
+#textMessages {
+    width: 100%;
+}
+
+#textMessages>div {
+    width: auto;
+}
+
+.textChatImage {
+    width: 100%;
+}
+
 #textMsg {
     flex-grow: 1;
     padding: 5px 5px;
@@ -237,9 +256,18 @@ select {
     padding: 5px 5px;
 }
 
+#imageSelectDiv {
+    display: flex;
+    margin: 0.25em 0;
+}
+
+#imageText {
+    flex-grow: 1;
+}
+
 @media (max-width: 680px) {
     body {
-        padding: 0.5em 0.5em;
+        margin: 0.5em 0.5em;
     }
 
     div#videos>video {
@@ -268,5 +296,9 @@ select {
 
     #loginDiv {
         width: 75%;
+    }
+
+    #mainButtons>button {
+        width: 100%;
     }
 }
