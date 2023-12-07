@@ -23,7 +23,7 @@
     <!-- <h1>Welcome to WebRTC!</h1> -->
     <div id="loginDiv">
         <label>User: </label>
-        <input type="text" id="userName" name="userName">
+        <input type="text" id="userName" name="userName" placeholder="Enter your name">
         <input type="button" value="Submit" id="Submit"
             onClick="showUserName.innerHTML=userName.value; logoutDiv.style.display = 'block'; loginDiv.style.display = 'None'">
         <p></p>
@@ -54,12 +54,12 @@
             <span>Hang-up</span>
         </button>
     </div>
-    <div>
-        <span id="currentRoom"></span>
-    </div>
     <div id="videos">
         <video id="remoteVideo" autoplay playsinline></video>
         <video id="localVideo" muted autoplay playsinline></video>
+    </div>
+    <div id="currentRoomDiv">
+        <span id="currentRoom"></span>
     </div>
     <section>
         <div class="select">

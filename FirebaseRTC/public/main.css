@@ -73,11 +73,18 @@ body {
 } */
 
 body {
-    margin: 1em;
+    padding: 1em 1em;
+}
+
+#loginDiv {
+    width: 20em;
+    display: flex;
+    align-items: center;
 }
 
 #loginDiv>input[type=text] {
-    width: 18em;
+    flex-grow: 1;
+    margin: 1em 5px;
     padding: 5px 5px;
 }
 
@@ -94,7 +101,7 @@ body {
     font-size: 1rem;
     border: none;
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: 8px;
     background-color: #007FFF;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.24);
     color: white
@@ -122,17 +129,19 @@ div#videos>video {
 }
 
 #localVideo {
-
     width: 25%;
     background: #ECEFF1;
 }
 
 #remoteVideo {
-
     max-width: initial;
     height: 70%;
     width: 70%;
-    background: gray;
+    background: lightgrey;
+}
+
+#currentRoomDiv {
+    margin: 0.25em 0;
 }
 
 .container {
@@ -213,9 +222,15 @@ select {
     float: right;
 }
 
+#textChat>div {
+    display: flex;
+    align-items: center;
+}
+
 #textMsg {
-    width: 50%;
+    flex-grow: 1;
     padding: 5px 5px;
+    margin: 0px 5px;
 }
 
 #sendText {
@@ -223,6 +238,10 @@ select {
 }
 
 @media (max-width: 680px) {
+    body {
+        padding: 0.5em 0.5em;
+    }
+
     div#videos>video {
         flex-direction: column;
     }
@@ -244,6 +263,10 @@ select {
     }
 
     .textChat {
-        width: auto
+        width: auto;
+    }
+
+    #loginDiv {
+        width: 75%;
     }
 }

@@ -21,7 +21,7 @@ var textChannel = null;
 const TURN_API_KEY = "https://nhyao.metered.live/api/v1/turn/credentials?apiKey=28c84515a1faf51ce04566f25404dfa4c3d5";
 
 // IMPORTANT: If testing locally, let useTURN = false; Set to true before deploying on Firebase Hosting.
-let useTURN = false;
+let useTURN = true;
 
 function init() {
   document.querySelector('#cameraBtn').addEventListener('click', openUserMedia);
