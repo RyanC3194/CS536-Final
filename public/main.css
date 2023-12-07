@@ -1,9 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap');
+
 body {
     background: #ECEFF1;
     color: rgba(0, 0, 0, 0.87);
     font-family: Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
+}
+
+header {
+    overflow: hidden;
+    background-color: #007FFF;
+    margin-bottom: 1em;
+}
+
+header>h1 {
+    font-family: Inter;
+    margin-left: 1em;
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: white;
 }
 
 #message {
@@ -72,12 +88,20 @@ body {
     }
 } */
 
-body {
-    margin: 1em;
+main {
+    margin: 1em 1em;
+}
+
+#loginDiv {
+    width: 20em;
+    display: flex;
+    align-items: center;
+    margin: 10px;
 }
 
 #loginDiv>input[type=text] {
-    width: 18em;
+    flex-grow: 1;
+    margin: 0 5px;
     padding: 5px 5px;
 }
 
@@ -89,12 +113,16 @@ body {
     padding-right: 20px;
 }
 
+#mainButtons {
+    margin-bottom: 0.5em;
+}
+
 #mainButtons>button {
     margin: 0.2em 0.1em;
     font-size: 1rem;
     border: none;
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: 8px;
     background-color: #007FFF;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.24);
     color: white
@@ -122,17 +150,19 @@ div#videos>video {
 }
 
 #localVideo {
-
     width: 25%;
     background: #ECEFF1;
 }
 
 #remoteVideo {
-
     max-width: initial;
     height: 70%;
     width: 70%;
-    background: gray;
+    background: lightgrey;
+}
+
+#currentRoom {
+    margin-bottom: 0.30em;
 }
 
 .container {
@@ -152,12 +182,6 @@ div#videos>video {
     margin: 10px 0;
     position: relative;
 }
-
-.textSubmitButton {
-    position:absolute;
-    right:10px;
-}
-
 
 /* select media devices section */
 section {
@@ -190,13 +214,15 @@ select {
     color: white
 }
 
-#cancelJoinBtn {
+#cancelJoinBtn,
+#disconnectOkBtn,
+#roomNotFoundOkBtn {
     margin: 0.2em 0.2em;
     font-size: 1rem;
     padding: 8px 10px;
     border: none;
     border-radius: 4px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.24);
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 #modalButtons>button:active {
@@ -220,16 +246,56 @@ select {
     float: right;
 }
 
+#textChat>div {
+    display: flex;
+    align-items: center;
+}
+
+#textMessages {
+    width: 100%;
+}
+
+#textMessages>div {
+    width: auto;
+}
+
+.textChatImage {
+    width: 100%;
+}
+
 #textMsg {
-    width: 50%;
+    flex-grow: 1;
     padding: 5px 5px;
+    margin: 0px 5px;
 }
 
 #sendText {
     padding: 5px 5px;
 }
 
+#imageSelectDiv {
+    display: flex;
+    margin: 0.25em 0;
+}
+
+#imageText {
+    flex-grow: 1;
+}
+
 @media (max-width: 680px) {
+    header>h1 {
+        text-align: center;
+        margin-left: 0;
+    }
+
+    main {
+        margin: 0.5em 0.5em;
+    }
+
+    #videos {
+        justify-content: center;
+    }
+
     div#videos>video {
         flex-direction: column;
     }
@@ -251,6 +317,14 @@ select {
     }
 
     .textChat {
-        width: auto
+        width: auto;
+    }
+
+    #loginDiv {
+        width: 75%;
+    }
+
+    #mainButtons>button {
+        width: 100%;
     }
 }

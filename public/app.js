@@ -38,16 +38,20 @@ function processMessage(message) {
 function processImgChannel(event) {
   receiveBuffer.push(event.data);
   receivedSize += event.data.byteLength;
+  console.log(receivedSize);
 
   if (receivedSize == expectedSize) {
     let reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       processImg(e.target.result);
     }
 
     const received = new Blob(receiveBuffer);
 
     processImg(URL.createObjectURL(received));
+    receivedSize = 0;
+    expectedSize = -1;
+    receiveBuffer = [];
   }
 
 
@@ -56,13 +60,13 @@ function processImgChannel(event) {
 function sendImage() {
   if (document.getElementById("imageText").files && document.getElementById("imageText").files[0]) {
     let file = document.getElementById("imageText").files[0];
-  
+
     expectedSizeChannel.send(file.size)
     // send the date over
     let reader = new FileReader();
     let offset = 0;
     const chunkSize = 16384;
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       imgChannel.send(e.target.result);
       offset += e.target.result.byteLength;
       if (offset < file.size) {
@@ -79,7 +83,7 @@ function sendImage() {
 
     // show on local
     let reader1 = new FileReader();
-    reader1.onload = function(e) {
+    reader1.onload = function (e) {
       processImg(e.target.result);
     }
     reader1.readAsDataURL(file);
@@ -92,7 +96,7 @@ function processImg(file) {
   var imgEle = document.createElement("img");
 
   imgEle.src = file;
-  imgEle.className = "textChat";
+  imgEle.className = "textChatImage";
 
   textBubble.appendChild(imgEle);
   document.getElementById("textMessages").appendChild(textBubble);
@@ -101,7 +105,7 @@ function processImg(file) {
 
 // initialize a new peer connection
 async function initPeerConnection(roomsDB, collectionName) {
-  let config = { iceServers: [{ urls: 'stun:stun1.l.google.com:19302'}] };
+  let config = { iceServers: [{ urls: 'stun:stun1.l.google.com:19302' }] };
 
   if (useTURN) {
     const response = await fetch(TURN_API_KEY);
@@ -125,6 +129,7 @@ async function initPeerConnection(roomsDB, collectionName) {
 
   // listen for remote media track
   peerConnection.addEventListener('track', event => {
+    console.log('> remote track:', event.streams[0]);
     event.streams[0].getTracks().forEach(track => {
       document.getElementById('remoteVideo').srcObject.addTrack(track);
     });
@@ -132,20 +137,20 @@ async function initPeerConnection(roomsDB, collectionName) {
 
   // set up data channels (text and images)
   if (collectionName == "caller") {
-      // create the text channel
-    textChannel = peerConnection.createDataChannel("text", { reliable: true, ordered: true});
+    // create the text channel
+    textChannel = peerConnection.createDataChannel("text", { reliable: true, ordered: true });
     textChannel.onmessage = function (event) {
       processMessage(event.data);
     };
 
     // image Channel
-    imgChannel = peerConnection.createDataChannel("img", { reliable: true, ordered: true});
+    imgChannel = peerConnection.createDataChannel("img", { reliable: true, ordered: true });
     imgChannel.onmessage = function (event) {
       processImgChannel(event);
     };
 
     // use to send the expected size for the image coming from the img channel
-    expectedSizeChannel = peerConnection.createDataChannel("expectedSize", {reliable: true, ordered: true});
+    expectedSizeChannel = peerConnection.createDataChannel("expectedSize", { reliable: true, ordered: true });
     expectedSizeChannel.onmessage = function (event) {
       expectedSize = event.data;
     }
@@ -200,8 +205,8 @@ async function createRoom() {
   // set local SDP
   const offer = await peerConnection.createOffer();
   await peerConnection.setLocalDescription(offer);
-  await roomsDB.set({'offer': {type: offer.type, sdp: offer.sdp}});
-  document.getElementById('currentRoom').innerText = `RoomID: ${roomsDB.id}`;
+  await roomsDB.set({ 'offer': { type: offer.type, sdp: offer.sdp } });
+  document.getElementById('currentRoom').innerText = `Room ID: ${roomsDB.id}`;
 
   // Listening for remote session from DB
   roomsDB.onSnapshot(async snapshot => {
@@ -263,7 +268,7 @@ async function joinRoomById(roomId) {
 
   if (roomSnapshot.exists) {
 
-    await initPeerConnection(roomsDB,"callee");
+    await initPeerConnection(roomsDB, "callee");
 
     // Set local and remote SDP 
     const offer = roomSnapshot.data().offer;
@@ -271,7 +276,7 @@ async function joinRoomById(roomId) {
     const answer = await peerConnection.createAnswer();
     await peerConnection.setLocalDescription(answer);
 
-    await roomsDB.update({answer: {type: answer.type,sdp: answer.sdp}});
+    await roomsDB.update({ answer: { type: answer.type, sdp: answer.sdp } });
 
     // Listen for remote ICE 
     roomsDB.collection('caller').onSnapshot(snapshot => {
@@ -303,6 +308,9 @@ async function openMedia() {
   navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
 
   localVideoElement.srcObject = stream;
+
+  restartTracks(); // Update to latest selection of media devices
+
   document.getElementById('remoteVideo').srcObject = new MediaStream();
 
   document.getElementById('openMediaButton').disabled = true;
@@ -313,7 +321,6 @@ async function openMedia() {
 
 
 function hangUPUI() {
-  localVideoElement.srcObject = null;
   document.getElementById('remoteVideo').srcObject = null;
   document.getElementById('openMediaButton').disabled = false;
   document.getElementById('createRoomButton').disabled = true;
@@ -341,10 +348,14 @@ async function deleteRoom() {
 
 async function hangUp() {
   initializedHangup = true;
-  const tracks = localVideoElement.srcObject.getTracks();
-  tracks.forEach(track => {
-    track.stop();
-  });
+
+  // removeTracks(); // do before stopping tracks? browsers inconsistent
+  if (localVideoElement.srcObject) {
+    localVideoElement.srcObject.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
+  localVideoElement.srcObject = null;
 
   if (document.getElementById('remoteVideo').srcObject) {
     document.getElementById('remoteVideo').srcObject.getTracks().forEach(track => track.stop());
@@ -385,15 +396,15 @@ function gotDevices(deviceInfos) {
     option.value = deviceInfo.deviceId;
 
     if (deviceInfo.kind === "audioinput") {
-      option.text = deviceInfo.label || `microphone ${audioInputSelect.length + 1} (check permissions)`;
+      option.text = deviceInfo.label || `Microphone ${audioInputSelect.length + 1} (check permissions)`;
       audioInputSelect.appendChild(option);
     }
     else if (deviceInfo.kind === "audiooutput") {
-      option.text = deviceInfo.label || `speaker ${audioOutputSelect.length + 1} (check permissions)`;
+      option.text = deviceInfo.label || `Speaker ${audioOutputSelect.length + 1} (check permissions)`;
       audioOutputSelect.appendChild(option);
     }
     else if (deviceInfo.kind === "videoinput") {
-      option.text = deviceInfo.label || `camera ${videoSelect.length + 1} (check permissions)`;
+      option.text = deviceInfo.label || `Camera ${videoSelect.length + 1} (check permissions)`;
       videoSelect.appendChild(option);
     }
     else {
@@ -448,11 +459,12 @@ function gotStream(stream) {
 }
 
 function restartTracks() {
-  if (localVideoElement.srcObject) {
-    localVideoElement.srcObject.getTracks().forEach(track => {
-      track.stop();
-    });
+  if (!localVideoElement.srcObject) {
+    return;
   }
+  localVideoElement.srcObject.getTracks().forEach(track => {
+    track.stop();
+  });
   const audioSource = audioInputSelect.value;
   const videoSource = videoSelect.value;
   const constraints = {
@@ -465,6 +477,7 @@ function restartTracks() {
 function switchTracks() {
   if (!peerConnection) {
     restartTracks();
+    // state: if local media is open but there is no peer connection
     return;
   }
   connections = [peerConnection];
@@ -484,12 +497,14 @@ function switchTracks() {
           .find((s) => s.track.kind === videoTrack.kind);
         console.log("Found video sender:", videoSender);
         videoSender.replaceTrack(videoTrack);
+        // console.log(`videoTrack.kind ${videoTrack.kind}`); // debug
 
         const audioSender = pc
           .getSenders()
           .find((s) => s.track.kind === audioTrack.kind);
         console.log("Found audio sender:", audioSender);
         audioSender.replaceTrack(audioTrack);
+        // console.log(`audioTrack.kind ${audioTrack.kind}`); // debug
 
         localVideoElement.srcObject = stream;
       });
@@ -500,6 +515,14 @@ function switchTracks() {
 
   // Refresh list of available devices
   navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
+}
+
+function removeTracks() {
+  // Must have initialized hangup and peer connection still exists
+  if (!initializedHangup || !peerConnection) {
+    return;
+  }
+  peerConnection.getSenders().forEach((sender) => sender.replaceTrack(null));
 }
 
 /* The sinkId property is part of the Web Audio API and allows developers to select the output 
