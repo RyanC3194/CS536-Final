@@ -129,6 +129,7 @@ async function initPeerConnection(roomsDB, collectionName) {
 
   // listen for remote media track
   peerConnection.addEventListener('track', event => {
+    console.log('> remote track:', event.streams[0]);
     event.streams[0].getTracks().forEach(track => {
       document.getElementById('remoteVideo').srcObject.addTrack(track);
     });
@@ -320,7 +321,6 @@ async function openMedia() {
 
 
 function hangUPUI() {
-  localVideoElement.srcObject = null;
   document.getElementById('remoteVideo').srcObject = null;
   document.getElementById('openMediaButton').disabled = false;
   document.getElementById('createRoomButton').disabled = true;
@@ -348,11 +348,14 @@ async function deleteRoom() {
 
 async function hangUp() {
   initializedHangup = true;
+
+  // removeTracks(); // do before stopping tracks? browsers inconsistent
   if (localVideoElement.srcObject) {
     localVideoElement.srcObject.getTracks().forEach(track => {
       track.stop();
     });
   }
+  localVideoElement.srcObject = null;
 
   if (document.getElementById('remoteVideo').srcObject) {
     document.getElementById('remoteVideo').srcObject.getTracks().forEach(track => track.stop());
@@ -360,7 +363,6 @@ async function hangUp() {
 
   if (peerConnection) {
     peerConnection.close();
-    peerConnection = null;
   }
 
   await deleteRoom();
@@ -475,6 +477,7 @@ function restartTracks() {
 function switchTracks() {
   if (!peerConnection) {
     restartTracks();
+    // state: if local media is open but there is no peer connection
     return;
   }
   connections = [peerConnection];
@@ -494,12 +497,14 @@ function switchTracks() {
           .find((s) => s.track.kind === videoTrack.kind);
         console.log("Found video sender:", videoSender);
         videoSender.replaceTrack(videoTrack);
+        // console.log(`videoTrack.kind ${videoTrack.kind}`); // debug
 
         const audioSender = pc
           .getSenders()
           .find((s) => s.track.kind === audioTrack.kind);
         console.log("Found audio sender:", audioSender);
         audioSender.replaceTrack(audioTrack);
+        // console.log(`audioTrack.kind ${audioTrack.kind}`); // debug
 
         localVideoElement.srcObject = stream;
       });
@@ -510,6 +515,14 @@ function switchTracks() {
 
   // Refresh list of available devices
   navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
+}
+
+function removeTracks() {
+  // Must have initialized hangup and peer connection still exists
+  if (!initializedHangup || !peerConnection) {
+    return;
+  }
+  peerConnection.getSenders().forEach((sender) => sender.replaceTrack(null));
 }
 
 /* The sinkId property is part of the Web Audio API and allows developers to select the output 
