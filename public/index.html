@@ -20,62 +20,91 @@
 </head>
 
 <body>
-    <h1>Welcome to WebRTC!</h1>
-    <div id="loginDiv">
-        <label>User: </label>
-        <input type="text" id="userName" name="userName" placeholder="Enter your name">
-        <input type="button" value="Submit" id="Submit"
-            onClick="showUserName.innerHTML=userName.value; logoutDiv.style.display = 'block'; loginDiv.style.display = 'None'">
-        <p></p>
-    </div>
-    <div style="display: none;" id="logoutDiv">
-        <label>Welcome, </label>
-        <label id="showUserName">dum</label>
-        <input type="button" id="logout" value="Logout"
-            onclick="userName.value=''; logoutDiv.style.display = 'None'; loginDiv.style.display = 'Block'"></button>
-        <p></p>
-    </div>
-    <div id="videos">
-        <video id="remoteVideo" autoplay playsinline></video>
-        <video id="localVideo" muted autoplay playsinline></video>
-    </div>
-    <div id="currentRoom"></div>
-    <div id="mainButtons">
-        <button id="openMediaButton" onclick="openMedia();">
-            <i aria-hidden="true" class="fa-solid fa-camera"></i>
-            <i aria-hidden="true" class="fa-solid fa-microphone"></i>
-            <span>Turn on camera & microphone</span>
-        </button>
-        <button disabled id="createRoomButton" onclick="createRoom();">
-            <i aria-hidden="true" class="fa-solid fa-user-plus"></i>
-            <span>Create room</span>
-        </button>
-        <button disabled id="joinRoomButton" onclick="joinRoom();">
-            <i aria-hidden="true" class="fa-solid fa-user-group"></i>
-            <span>Join room</span>
-        </button>
-        <button disabled id="hangUpButton" onclick="hangUp();">
-            <i aria-hidden="true" class="fa-solid fa-xmark"></i>
-            <span>Hang-up</span>
-        </button>
-    </div>
-    <section>
-        <div class="select">
-            <label class="device-label" for="audioSource">Audio input source: </label><select id="audioSource">
-                <option value="none">None detected</option>
-            </select>
+    <header>
+        <!-- Feel free to change the name -->
+        <h1>WeRTC</h1>
+    </header>
+    <main>
+        <div id="loginDiv">
+            <label>User: </label>
+            <input type="text" id="userName" name="userName" placeholder="Enter your name">
+            <input type="button" value="Submit" id="Submit"
+                onClick="showUserName.innerHTML=userName.value; logoutDiv.style.display = 'block'; loginDiv.style.display = 'None'">
+            <p></p>
         </div>
-        <div class="select">
-            <label class="device-label" for="audioOutput">Audio output destination: </label><select id="audioOutput">
-                <option value="none">None detected</option>
-            </select>
+        <div style="display: none;" id="logoutDiv">
+            <label>Welcome, </label>
+            <label id="showUserName">dum</label>
+            <input type="button" id="logout" value="Logout"
+                onclick="userName.value=''; logoutDiv.style.display = 'None'; loginDiv.style.display = 'Block'"></button>
+            <p></p>
         </div>
-        <div class="select">
-            <label class="device-label" for="videoSource">Video source: </label><select id="videoSource">
-                <option value="none">None detected</option>
-            </select>
+        <div id="videos">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <video id="localVideo" muted autoplay playsinline></video>
         </div>
-    </section>
+        <div id="currentRoom"></div>
+        <div id="mainButtons">
+            <button id="openMediaButton" onclick="openMedia();">
+                <i aria-hidden="true" class="fa-solid fa-camera"></i>
+                <i aria-hidden="true" class="fa-solid fa-microphone"></i>
+                <!-- &nbsp = non-breaking space -->
+                <span>&nbspTurn on camera & microphone</span>
+            </button>
+            <button disabled id="createRoomButton" onclick="createRoom();">
+                <i aria-hidden="true" class="fa-solid fa-user-plus"></i>
+                <span>Create room</span>
+            </button>
+            <button disabled id="joinRoomButton" onclick="joinRoom();">
+                <i aria-hidden="true" class="fa-solid fa-user-group"></i>
+                <span>Join room</span>
+            </button>
+            <button disabled id="hangUpButton" onclick="hangUp();">
+                <i aria-hidden="true" class="fa-solid fa-phone-slash"></i>
+                <span>Hang-up</span>
+            </button>
+        </div>
+        <section>
+            <div class="select">
+                <label class="device-label" for="audioSource">Audio input source: </label><select id="audioSource">
+                    <option value="none">None detected</option>
+                </select>
+            </div>
+            <div class="select">
+                <label class="device-label" for="audioOutput">Audio output destination: </label><select
+                    id="audioOutput">
+                    <option value="none">None detected</option>
+                </select>
+            </div>
+            <div class="select">
+                <label class="device-label" for="videoSource">Video source: </label><select id="videoSource">
+                    <option value="none">None detected</option>
+                </select>
+            </div>
+        </section>
+        <div id="textChat" class="textChat">
+            <div>
+                <div id="textMessages">
+                    <!-- test chat message formatting -->
+                    <!-- <div class="container">
+                        <label>Hi!!!</label>
+                    </div>
+                    <div class="container">
+                        <img src="https://wallpapers.com/images/featured/4k-oaax18kaapkokaro.jpg" class="textChatImage">
+                    </div> -->
+                </div>
+            </div>
+            <div>
+                <i class="fa-solid fa-paper-plane"></i>
+                <input type="text" id="textMsg" name="textMsg" placeholder="Enter your message">
+                <input type="button" id="sendText" value="Send" class="textSubmitButton" onclick="sendText();">
+            </div>
+            <div id="imageSelectDiv">
+                <input type="file" id="imageText" name="imageText" accept="image/png, image/jpeg" />
+                <input type="button" id="sendImage" value="Send Image" class="textSubmitButton" onclick="sendImage();">
+            </div>
+        </div>
+    </main>
 
     <dialog data-modal>
         <form>
@@ -115,29 +144,6 @@
                     onclick="(document.getElementById('disconnected')).close();"><span>Ok</span></button>
         </form>
     </dialog>
-    <div id="textChat" class="textChat">
-        <div>
-            <div id="textMessages">
-                <!-- test chat message formatting -->
-                <!-- <div class="container">
-                    <label>Hi!!!</label>
-                </div>
-                <div class="container">
-                    <img src="https://wallpapers.com/images/featured/4k-oaax18kaapkokaro.jpg" class="textChatImage">
-                </div> -->
-            </div>
-        </div>
-        <div>
-            <i class="fa-solid fa-paper-plane"></i>
-            <input type="text" id="textMsg" name="textMsg">
-            <input type="button" id="sendText" value="Send" class="textSubmitButton" onclick="sendText();">
-        </div>
-        <div id="imageSelectDiv">
-            <input type="file" id="imageText" name="imageText" accept="image/png, image/jpeg" />
-            <input type="button" id="sendImage" value="Send Image" class="textSubmitButton" onclick="sendImage();">
-        </div>
-
-    </div>
 
     <script src="app.js"></script>
 </body>

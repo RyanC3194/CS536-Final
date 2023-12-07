@@ -14,7 +14,7 @@ let receivedSize = 0;
 const TURN_API_KEY = "https://nhyao.metered.live/api/v1/turn/credentials?apiKey=28c84515a1faf51ce04566f25404dfa4c3d5";
 
 // IMPORTANT: If testing locally, let useTURN = false; Set to true before deploying on Firebase Hosting.
-const useTURN = true;
+const useTURN = false;
 
 // send text message
 function sendText() {
@@ -341,10 +341,11 @@ async function deleteRoom() {
 
 async function hangUp() {
   initializedHangup = true;
-  const tracks = localVideoElement.srcObject.getTracks();
-  tracks.forEach(track => {
-    track.stop();
-  });
+  if (localVideoElement.srcObject) {
+    localVideoElement.srcObject.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
 
   if (document.getElementById('remoteVideo').srcObject) {
     document.getElementById('remoteVideo').srcObject.getTracks().forEach(track => track.stop());
@@ -385,15 +386,15 @@ function gotDevices(deviceInfos) {
     option.value = deviceInfo.deviceId;
 
     if (deviceInfo.kind === "audioinput") {
-      option.text = deviceInfo.label || `microphone ${audioInputSelect.length + 1} (check permissions)`;
+      option.text = deviceInfo.label || `Microphone ${audioInputSelect.length + 1} (check permissions)`;
       audioInputSelect.appendChild(option);
     }
     else if (deviceInfo.kind === "audiooutput") {
-      option.text = deviceInfo.label || `speaker ${audioOutputSelect.length + 1} (check permissions)`;
+      option.text = deviceInfo.label || `Speaker ${audioOutputSelect.length + 1} (check permissions)`;
       audioOutputSelect.appendChild(option);
     }
     else if (deviceInfo.kind === "videoinput") {
-      option.text = deviceInfo.label || `camera ${videoSelect.length + 1} (check permissions)`;
+      option.text = deviceInfo.label || `Camera ${videoSelect.length + 1} (check permissions)`;
       videoSelect.appendChild(option);
     }
     else {
