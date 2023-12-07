@@ -38,6 +38,7 @@ function processMessage(message) {
 function processImgChannel(event) {
   receiveBuffer.push(event.data);
   receivedSize += event.data.byteLength;
+  console.log(receivedSize);
 
   if (receivedSize == expectedSize) {
     let reader = new FileReader();
@@ -48,6 +49,9 @@ function processImgChannel(event) {
     const received = new Blob(receiveBuffer);
 
     processImg(URL.createObjectURL(received));
+    receivedSize = 0;
+    expectedSize = -1;
+    receiveBuffer = [];
   }
 
 
