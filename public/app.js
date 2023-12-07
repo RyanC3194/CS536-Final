@@ -307,6 +307,9 @@ async function openMedia() {
   navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
 
   localVideoElement.srcObject = stream;
+
+  restartTracks(); // Update to latest selection of media devices
+
   document.getElementById('remoteVideo').srcObject = new MediaStream();
 
   document.getElementById('openMediaButton').disabled = true;
@@ -357,6 +360,7 @@ async function hangUp() {
 
   if (peerConnection) {
     peerConnection.close();
+    peerConnection = null;
   }
 
   await deleteRoom();
@@ -453,11 +457,12 @@ function gotStream(stream) {
 }
 
 function restartTracks() {
-  if (localVideoElement.srcObject) {
-    localVideoElement.srcObject.getTracks().forEach(track => {
-      track.stop();
-    });
+  if (!localVideoElement.srcObject) {
+    return;
   }
+  localVideoElement.srcObject.getTracks().forEach(track => {
+    track.stop();
+  });
   const audioSource = audioInputSelect.value;
   const videoSource = videoSelect.value;
   const constraints = {

@@ -130,7 +130,8 @@
             </h3>
             <label id="roomNotFoundText"></label>
             <p></p>
-            <button type="button" onclick="(document.getElementById('roomNotFound')).close();"><span>Ok</span></button>
+            <button type="button" id="roomNotFoundOkBtn"
+                onclick="(document.getElementById('roomNotFound')).close();"><span>Ok</span></button>
         </form>
     </dialog>
     <dialog disconnected id="disconnected">
@@ -138,7 +139,7 @@
             <h3>
                 Disconnected!
             </h3>
-            <label">The other client disconnceted!</label>
+            <label">The other client disconnected!</label>
                 <p></p>
                 <button type="button" id="disconnectOkBtn"
                     onclick="(document.getElementById('disconnected')).close();"><span>Ok</span></button>

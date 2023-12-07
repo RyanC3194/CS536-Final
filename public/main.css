@@ -215,7 +215,8 @@ select {
 }
 
 #cancelJoinBtn,
-#disconnectOkBtn {
+#disconnectOkBtn,
+#roomNotFoundOkBtn {
     margin: 0.2em 0.2em;
     font-size: 1rem;
     padding: 8px 10px;
